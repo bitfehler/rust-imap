@@ -115,6 +115,15 @@ impl<'a> Fetch<'a> {
         &self.flags[..]
     }
 
+    /// Contains the mod sequence of the performed operation if in response to a `STORE` or
+    /// `UID STORE` with `UNCHANGEDSINCE` in the query arguments.
+    pub fn mod_seq(&self) -> Option<u64> {
+        self.fetch.iter().find_map(|av| match av {
+            AttributeValue::ModSeq(mod_seq) => Some(*mod_seq),
+            _ => None,
+        })
+    }
+
     /// The bytes that make up the header of this message, if `BODY[HEADER]`, `BODY.PEEK[HEADER]`,
     /// or `RFC822.HEADER` was included in the `query` argument to `FETCH`.
     pub fn header(&self) -> Option<&[u8]> {
